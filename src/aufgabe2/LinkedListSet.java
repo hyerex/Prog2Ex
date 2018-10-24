@@ -42,6 +42,7 @@ public class LinkedListSet extends AbstractSet {
             size++;
             return true;
         } else {
+
             if (!contains(x)) {
                 Node p = head;
                 while (p.next != null && p.next.data < x) {
