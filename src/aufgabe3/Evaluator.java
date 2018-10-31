@@ -1,6 +1,9 @@
-package expressionevaluation;
+package aufgabe3;
 
+import java.util.EmptyStackException;
 import java.util.Scanner;
+
+import static aufgabe3.Tokenizer.*;
 
 /**
  * Klasse zum Auswerten von arithmetischen Ausdrücken.
@@ -16,6 +19,7 @@ public class Evaluator {
 	private static Object token;
 	private static Tokenizer tokenizer;
 
+
 	/**
 	 * Wertet expr als arithmetischen Ausdruck aus.
 	 *
@@ -24,52 +28,158 @@ public class Evaluator {
 	 */
 	public static Double eval(String expr) {
 		size = 0;
+		push(DOLLAR);
 		tokenizer = new Tokenizer(expr);
 		token = tokenizer.nextToken();
-		
 		while (token != null) {
 			// Ihr Code:
 			// ...
+			if(!shift()) {
+				if (!reduce()) {
+					if (!accept()) {
+						break;
+					} else {
+						return Double.parseDouble(top().toString());
+					}
+				}
+			}
 		}
-		
 		return null;
 	}
 
 	private static boolean shift() {
 		// Prüfe, ob shift gemacht werden muss und führe shift durch.
 		// Liefere true zurück, falls shift gemacht wurde, sonst false.
-		
 		// Ihr Code:
 		// ...
-		return true;
+
+		if (isDollar(top()) && (isKlAuf(token) || isVal(token)) ){				//REGEL 1
+			doShift();
+			return true;
+		} if (	(isOp(top())) && (isKlZu(token) || isVal(token))) {			//REGEL 2
+			doShift();
+			return true;
+		} if ( isKlAuf(top()) && (isKlAuf(top())|| isVal(top())) ) {		//REGEL 3
+			doShift();
+			return true;
+		} if (isVal(top()) && (isOp(token))) {                            //REGEL 6
+			Object tmp = pop();
+			if (isDollar(top())) {
+				push(tmp);
+				doShift();
+				return true;
+			}
+			push(tmp);
+		} if((isVal(top())) && (isKlZu(token) || isOp(token))){			//REGEL 7
+			Object tmp1 = pop();
+			if (isKlAuf(top())) {
+					push(tmp1);
+					doShift();
+					return true;
+			} else {
+				push(tmp1);
+			}
+		} if (isVal(top()) && (isOp(token))) {												//REGEL 9
+			Object tmp1 = pop();
+			if(isPlus(top()) || isMinus(top())) {
+				Object tmp2 = pop();
+				if (isVal(top())) {
+					push(tmp2);
+					push(tmp1);
+					doShift();
+					return true;
+				} else {
+					push(tmp2);
+				}
+			} else {
+				push(tmp1);
+			}
+		}
+		return false;
+
 	}
 
 	private static void doShift() {
-		System.out.println("shift");
-		
 		// Ihr Code:
 		// ...
+			push(token);
+			token = tokenizer.nextToken();
 	}
 	
 	private static boolean reduce() {
 		// Prüfe ob reduce gemacht werden muss und führe reduce durch.
 		// Liefere true zurück, falls reduce gemacht wurde, sonst false.
-		
+
+		//REGEL 4
+		if (isKlZu(top()) && (isKlZu(token)|| isOp(token)|| token == DOLLAR)){
+			Object tmp1 = pop();
+			if(isVal(top())) {
+				Object tmp2 = pop();
+				if (isKlAuf(top())) {
+					push(tmp2);
+					push(tmp1);
+					doReduceKlAufValKlZu();
+					return true;
+				} push(tmp2);
+			} push(tmp1);
+		} if (isVal(top()) && (isKlZu(token)|| isDollar(token))) {			//REGEL 8
+			Object tmp1 = pop();
+			if (isOp(top())) {
+				Object tmp2 = pop();
+				if(isVal(top())){
+					push(tmp2);
+					push(tmp1);
+					doReduceValOpVal();
+					return true;
+				} push(tmp2);
+			} push(tmp1);
+
+		} if (isVal(top()) && (isOp(token))) {																//REGEL 9
+			Object tmp1 = pop();
+			if((isMult(top())|| isDiv(top()))){
+				Object tmp2 = pop();
+				if(isVal(top())) {
+					push(tmp2);
+					push(tmp1);
+					doReduceValOpVal();
+					return true;
+				}
+				push(tmp2);
+			}
+			push(tmp1);
+		}
+		return false;
 		// Ihr Code:
 		// ...
-		return true;
 	}
 	
 	private static void doReduceKlAufValKlZu() {
-		System.out.println("reduce ( val )");
-		
+		pop();
+		Object tmp = pop();
+		pop();
+		push(tmp);
 		// Ihr Code:
 		// ...
 	}
 
 	private static void doReduceValOpVal() {
-		System.out.println("reduce val op val");
-		
+		Object v1 = pop();
+		Object o = pop();
+		Object v2 = pop();
+		Double tmp;
+		if (isPlus(o)) {
+			tmp = Double.parseDouble(v2.toString()) + Double.parseDouble(v1.toString());
+			push(tmp);
+		} if (isMinus(o)) {
+			tmp = Double.parseDouble(v2.toString()) - Double.parseDouble(v1.toString());
+			push(tmp);
+		} if (isMult(o)) {
+			tmp = Double.parseDouble(v2.toString()) * Double.parseDouble(v1.toString());
+			push(tmp);
+		} if (isDiv(o)) {
+			tmp = Double.parseDouble(v2.toString())/ Double.parseDouble(v1.toString());
+			push(tmp);
+		}
 		// Ihr Code:
 		// ...
 	}
@@ -79,7 +189,15 @@ public class Evaluator {
 		
 		// Ihr Code:
 		// ...
-		return true;
+		if (isVal(top()) && isDollar(token)) {
+			Object tmp1 = pop();
+			if (isDollar(top())) {
+				push(tmp1);
+				return true;
+			}
+			push(tmp1);
+		}
+		return false;
 	}
 
 	private static boolean isKlAuf(Object o) {
@@ -134,6 +252,33 @@ public class Evaluator {
 			String line = in.nextLine();
 			// Ihr Code:
 			// ...
+			if (line.equals("end")) {
+				System.out.println("bye");
+				break;
+			}
+			if (eval(line) == null) {
+				System.out.println("Error");
+				continue;
+			} else {
+				System.out.println(eval(line));
+			}
+
+		}
+	}
+
+	public static void push(Object x) {
+		stack[size++] = x;
+	}
+
+	public static Object top() {
+			return stack[size - 1];
+	}
+
+	public static Object pop() {
+		if (size == 0) {
+			throw new EmptyStackException();
+		} else {
+			return stack[--size];
 		}
 	}
 
@@ -158,5 +303,6 @@ public class Evaluator {
 		
 		// read-evaluate-print-loop:
 		repl();
+
 	}
 }
