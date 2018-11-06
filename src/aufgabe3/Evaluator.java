@@ -53,7 +53,7 @@ public class Evaluator {
 		// Ihr Code:
 		// ...
 
-		if (isDollar(top()) && (isKlAuf(token) || isVal(token)) ){				//REGEL 1
+		if (isDollar(top()) && (isKlAuf(token) || isVal(token)) ){			//REGEL 1
 			doShift();
 			return true;
 		} if (	(isOp(top())) && (isKlZu(token) || isVal(token))) {			//REGEL 2
@@ -62,7 +62,7 @@ public class Evaluator {
 		} if ( isKlAuf(top()) && (isKlAuf(top())|| isVal(top())) ) {		//REGEL 3
 			doShift();
 			return true;
-		} if (isVal(top()) && (isOp(token))) {                            //REGEL 6
+		} if (isVal(top()) && (isOp(token))) {                            	//REGEL 6
 			Object tmp = pop();
 			if (isDollar(top())) {
 				push(tmp);
@@ -70,7 +70,7 @@ public class Evaluator {
 				return true;
 			}
 			push(tmp);
-		} if((isVal(top())) && (isKlZu(token) || isOp(token))){			//REGEL 7
+		} if((isVal(top())) && (isKlZu(token) || isOp(token))){				//REGEL 7
 			Object tmp1 = pop();
 			if (isKlAuf(top())) {
 					push(tmp1);
@@ -79,7 +79,7 @@ public class Evaluator {
 			} else {
 				push(tmp1);
 			}
-		} if (isVal(top()) && (isOp(token))) {												//REGEL 9
+		} if (isVal(top()) && (isOp(token))) {								//REGEL 9
 			Object tmp1 = pop();
 			if(isPlus(top()) || isMinus(top())) {
 				Object tmp2 = pop();
