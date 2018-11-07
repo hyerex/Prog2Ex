@@ -23,10 +23,13 @@ public abstract class AbstractSet<T> implements Set<T>
     @Override
     public boolean containsAll(Set<?> s) {
         for (Object o : s) {
-            if (!this.contains(o)){
+            if (this.contains(o)){
+                return true;
+            } else {
                 return false;
             }
-        } return true;
+        }
+        return true;
     }
 
 
@@ -37,12 +40,6 @@ public abstract class AbstractSet<T> implements Set<T>
             this.add(o);
         }
     }
-    /*
-    for ( Object 0 : s) {
-
-    }
-    }*/
-
 
 
 
@@ -51,6 +48,8 @@ public abstract class AbstractSet<T> implements Set<T>
         for (Object o : s) {
             if(this.contains(o)) {
                 this.remove(o);
+            } else {
+                return;
             }
         }
     }

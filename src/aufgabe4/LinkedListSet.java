@@ -62,8 +62,9 @@ public class LinkedListSet<T> extends AbstractSet<T> {
             size++;
             modCount++;
             return true;
+        }else {
+            return false;
         }
-        return false;
 
     }
 
@@ -83,16 +84,12 @@ public class LinkedListSet<T> extends AbstractSet<T> {
 
     @Override
     public boolean contains(Object x) {
-        Node p;
-        for (p = head.next; p != null; p = p.next) {
-            if (p.data == x) break;
+        for (Node<T> p = head.next; p != null; p = p.next) {
+            if (p.data.equals(x)) {
+                return true;
+            }
         }
-
-        if (p != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return false;
     }
 
     @Override
@@ -136,6 +133,10 @@ public class LinkedListSet<T> extends AbstractSet<T> {
             }
             current = current.next;
             return current.data;
+        }
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
         }
     }
 

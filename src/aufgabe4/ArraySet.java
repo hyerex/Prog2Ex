@@ -9,13 +9,13 @@ public class ArraySet<T> extends AbstractSet<T> {
 
     @SuppressWarnings("unchecked")
     public ArraySet() {
-        size = 0;
-        data = (T[]) new Object[8];
+       clear();
     }
 
     private int size;
     private T[] data;
     private int modCount = 0;
+    private static final int defCap = 8;
 
     private void ensureCapacity(int newCapacity) {
         if (newCapacity < size) {
@@ -27,7 +27,7 @@ public class ArraySet<T> extends AbstractSet<T> {
     }
 
     public final void clear() {
-        data = null;
+        data = (T[]) new Object[defCap];
         size = 0;
     }
 
@@ -64,8 +64,16 @@ public class ArraySet<T> extends AbstractSet<T> {
         if (size == data.length) {
             ensureCapacity(size * 2);
         }
+
+        if (size == 0) {
+            data[0] = x;
+            size++;
+            modCount++;
+            return true;
+        }
+
         if(!contains(x)) {
-            insert(x);
+            data[size] = x;
             size++;
             modCount++;
             return true;
@@ -93,7 +101,7 @@ public class ArraySet<T> extends AbstractSet<T> {
                 size = 0;
             }
 
-            for(int i = 0; i < size(); i++) {
+            for(int i = 0; i < size; i++) {
                 if(data[i] == x) {
                     data[i] = data[i + 1];
                 }
@@ -121,7 +129,7 @@ public class ArraySet<T> extends AbstractSet<T> {
 
     private class ArraySetIterator implements Iterator<T> {
 
-        private int current = 0;
+        private int current = -1;
         private int expectedMod = modCount;
 
         @Override
