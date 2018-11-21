@@ -44,9 +44,9 @@ public class Tree {
     public static void main(String[] args) {
         StdDraw.setXscale(-500, 500);
         StdDraw.setYscale(-50, +1000);
-        StdDraw.show(0);
+        //StdDraw.show(0);
         tree(0.0, 0.0, 100.0, Math.toRadians(0));
-        StdDraw.show(0);
+        //StdDraw.show(0);
 
     }
 }
