@@ -10,7 +10,7 @@ public class FileBrowser2 {
     public static void main(String[] args) {
 
         File dir = new File("/home/blank/CLionProjects/");
-        LinkedList<String> l = new LinkedList<String>();
+        //LinkedList<String> l = new LinkedList<String>();
         traverse(dir, new DirectoryPrintVisitor());
 
         System.out.println("_--------_-----");
