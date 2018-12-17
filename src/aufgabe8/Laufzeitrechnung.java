@@ -5,8 +5,8 @@ import java.util.Arrays;
 public class Laufzeitrechnung {
 
     public static void main(String[] args) {
-        int n = 100000;
-        int m = 500000;
+        int n = 1000;
+        int m = 5000;
         Integer[] a = new Integer[n];
         for(int i = 0; i < a.length; i++) {
             a[i] = (int) (Math.random()*m);
