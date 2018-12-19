@@ -17,6 +17,11 @@ public class Taschenrechner extends JFrame implements ActionListener, ItemListen
     JTextField opYTextField;
     JTextField reTextField;
 
+    JCheckBox deg;
+    JCheckBox rad;
+    JCheckBox theme;
+    public boolean display;
+
     public Taschenrechner() {
         this.setTitle("Taschenrechner");
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -36,7 +41,6 @@ public class Taschenrechner extends JFrame implements ActionListener, ItemListen
         JLabel reLabel = new JLabel("Result");
 
         opXTextField = new JTextField("0",10);
-        opXTextField.addActionListener(this);
         opYTextField = new JTextField("0",10);
         reTextField = new JTextField("0", 10);
         reTextField.setEditable(false);
@@ -58,20 +62,16 @@ public class Taschenrechner extends JFrame implements ActionListener, ItemListen
         boxPanel.setPreferredSize(new Dimension(400,50));
         boxPanel.setLayout(new FlowLayout());
 
-
-
-        JCheckBox deg;
-        JCheckBox rad;
-        JCheckBox theme;
-
-        StringBuffer choices;
-
         deg = new JCheckBox("Deg");
         deg.setSelected(true);
+        deg.addActionListener(this);
         rad = new JCheckBox("Rad");
         rad.setSelected(false);
+        rad.addActionListener(this);
         theme = new JCheckBox("Helles Display");
         theme.setSelected(true);
+        theme.addItemListener(this);
+
 
         boxPanel.add(deg);
         boxPanel.add(rad);
@@ -141,12 +141,16 @@ public class Taschenrechner extends JFrame implements ActionListener, ItemListen
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        Object source = e.getSource();
         String sX = opXTextField.getText();
         String sY = opYTextField.getText();
-        x = Double.parseDouble(sX);
-        y = Double.parseDouble(sY);
-
+        try {
+            x = Double.parseDouble(sX);
+            y = Double.parseDouble(sY);
+        } catch(NumberFormatException f){
+            System.out.println("ERROR");
+            reTextField.setText("");
+            return;
+        }
         String str = e.getActionCommand();
         switch(str){
             case "+":
@@ -171,17 +175,23 @@ public class Taschenrechner extends JFrame implements ActionListener, ItemListen
                 break;
             case "sin":
                 opYTextField.setText("0");
-                result = Math.sin(x);
+                if(deg.isSelected() == true) {
+                    result = Math.sin(Math.toRadians(x));
+                } else if (rad.isSelected() == true) {
+                    result = Math.sin(x);
+                }
                 reTextField.setText("" + result);
-                System.out.println(result);
                 break;
             case "cos":
                 opYTextField.setText("0");
-                result = Math.cos(x);
+                if (deg.isSelected() == true) {
+                    result = Math.cos(Math.toRadians(x));
+                } else if (rad.isSelected() == true) {
+                    result = Math.cos(x);
+                }
                 reTextField.setText("" + result);
-                System.out.println(result);
                 break;
-            case "power":
+            case "x^y":
                 result = Math.pow(x, y);
                 reTextField.setText("" + result);
                 System.out.println(result);
@@ -200,8 +210,34 @@ public class Taschenrechner extends JFrame implements ActionListener, ItemListen
     }
 
     @Override
-    public void itemStateChanged(ItemEvent itemEvent) {
+    public void itemStateChanged(ItemEvent ie) {
+        Object source  = ie.getItemSelectable();
+        if(source == theme) {
+            display = true;
+        }
+        if (ie.getStateChange() == ItemEvent.DESELECTED){
+            display = false;
+        }
+        updateDisplay();
+    }
 
+    private void updateDisplay() {
+        if(display == false){
+            opXTextField.setBackground(Color.BLACK);
+            opYTextField.setBackground(Color.BLACK);
+            reTextField.setBackground(Color.BLACK);
+            opXTextField.setForeground(Color.YELLOW);
+            opYTextField.setForeground(Color.YELLOW);
+            reTextField.setForeground(Color.YELLOW);
+        }
+        else{
+            opXTextField.setBackground(Color.WHITE);
+            opYTextField.setBackground(Color.WHITE);
+            reTextField.setBackground(Color.WHITE);
+            opXTextField.setForeground(Color.BLACK);
+            opYTextField.setForeground(Color.BLACK);
+            reTextField.setForeground(Color.BLACK);
+        }
     }
 }
 
